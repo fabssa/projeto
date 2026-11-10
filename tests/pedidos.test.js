@@ -39,4 +39,37 @@ describe('Testes da API de Pedidos', () => {
     const res = await request(app).get('/pedidos/999');
     expect(res.statusCode).toEqual(404);
   });
+
+    it('Deve atualizar o status com uma transição válida (HTTP 200)', async () => {
+    const criado = await request(app)
+      .post('/pedidos')
+      .send({ cliente: 'Carlos Silva', tipo: 'entrega', valor: 350, prioridade: 'normal' });
+
+    const res = await request(app)
+      .patch(`/pedidos/${criado.body.id}/status`)
+      .send({ status: 'em_preparacao' });
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.status).toBe('em_preparacao');
+  });
+
+  it('Deve retornar HTTP 400 para transição de status inválida', async () => {
+    const criado = await request(app)
+      .post('/pedidos')
+      .send({ cliente: 'Carlos Silva', tipo: 'entrega', valor: 350, prioridade: 'normal' });
+
+    const res = await request(app)
+      .patch(`/pedidos/${criado.body.id}/status`)
+      .send({ status: 'entregue' });
+
+    expect(res.statusCode).toEqual(400);
+  });
+
+  it('Deve retornar HTTP 400 (e não 500) quando a requisição não tem corpo', async () => {
+    const res = await request(app).post('/pedidos');
+
+    expect(res.statusCode).toEqual(400);
+    expect(res.body).toHaveProperty('erro');
+  });
+
 });
