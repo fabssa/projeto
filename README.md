@@ -208,9 +208,6 @@ Os erros da API são devolvidos em JSON no formato `{ "erro": "mensagem" }`.
 - **Transições de status:** o `PATCH /pedidos/:id/status` aceitava qualquer status válido, então um pedido `entregue` podia voltar para `recebido`. O enunciado exige que a aplicação valide e documente as transições.
 - **Requisição sem corpo:** um POST ou PATCH sem JSON retornava HTTP 500 ("erro interno"), quando o correto era HTTP 400, já que é um erro de quem envia os dados. O enunciado diz que erros inesperados (500) não devem ser apresentados como validações do usuário.
 
-Esses casos não apareciam nos prints, mas o professor pode aplicar entradas diferentes das apresentadas, então precisavam ser corrigidos.
+Esses casos não apareciam nos prints, mas o professor pode aplicar entradas diferentes das apresentadas, então precisavam ser corrigidos. A IA me ajudou com esse processo.
 
-- **Sugestão aceita:** criar uma regra de transições de status. Implementei a tabela de transições permitidas na camada Service, por ser regra de negócio, e deixei no Controller apenas a escolha do código HTTP. Também troquei `req.body` por `req.body || {}` para que o corpo vazio caísse nas validações já existentes e retornasse 400.
-- **Sugestão não aplicada:** a IA também sugeriu tratar JSON malformado e rotas inexistentes com respostas em JSON, além de validar que o ID seja numérico. Decidi não incluir nesta versão para manter o escopo restrito ao que o enunciado pede e ao que eu consigo explicar e justificar.
 
-**Verificação:** conferi cada mudança manualmente no Postman (transição inválida retorna 400, transição válida retorna 200, POST e PATCH sem corpo retornam 400) e escrevi testes automatizados para esses cenários, todos passando com `npm test`.
