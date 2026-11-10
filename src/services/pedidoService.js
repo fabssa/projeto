@@ -4,6 +4,17 @@ let proximoId = 1;
 const tiposValidos = ['entrega', 'retirada'];
 const prioridadesValidas = ['baixa', 'normal', 'alta'];
 const statusValidos = ['recebido', 'em_preparacao', 'enviado', 'entregue', 'cancelado'];
+const transicoesPermitidas = {
+  recebido: ['em_preparacao', 'cancelado'],
+  em_preparacao: ['enviado', 'cancelado'],
+  enviado: ['entregue'],
+  entregue: [],
+  cancelado: []
+};
+
+function transicaoPermitida(statusAtual, novoStatus) {
+  return transicoesPermitidas[statusAtual].includes(novoStatus);
+}
 
 function criarPedido(dados) {
   const novoPedido = {
@@ -42,6 +53,7 @@ module.exports = {
   tiposValidos,
   prioridadesValidas,
   statusValidos,
+  transicaoPermitida,
   criarPedido,
   listarPedidos,
   buscarPorId,

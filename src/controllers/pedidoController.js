@@ -60,12 +60,17 @@ function atualizarStatus(req, res) {
       return res.status(400).json({ erro: `Status inválido. Valores aceitos: ${pedidoService.statusValidos.join(', ')}.` });
     }
 
-    const pedidoAtualizado = pedidoService.atualizarStatus(id, status);
+    const pedido = pedidoService.buscarPorId(id);
 
-    if (!pedidoAtualizado) {
+    if (!pedido) {
       return res.status(404).json({ erro: 'Pedido não encontrado.' });
     }
 
+    if (!pedidoService.transicaoPermitida(pedido.status, status)) {
+      return res.status(400).json({ erro: `Transição inválida: não é possível mudar de "${pedido.status}" para "${status}".` });
+    }
+
+    const pedidoAtualizado = pedidoService.atualizarStatus(id, status);
     return res.status(200).json(pedidoAtualizado);
   } catch (error) {
     return res.status(500).json({ erro: 'Erro interno inesperado no servidor.' });
