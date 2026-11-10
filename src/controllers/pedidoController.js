@@ -2,7 +2,7 @@ const pedidoService = require('../services/pedidoService');
 
 function criar(req, res) {
   try {
-    const { cliente, tipo, valor, prioridade } = req.body;
+    const { cliente, tipo, valor, prioridade } = req.body || {};
 
     if (!cliente || typeof cliente !== 'string' || cliente.trim() === '') {
       return res.status(400).json({ erro: 'O campo cliente é obrigatório e não pode ser vazio.' });
@@ -54,7 +54,7 @@ function buscarPorId(req, res) {
 function atualizarStatus(req, res) {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status } = req.body || {};
 
     if (!status || !pedidoService.statusValidos.includes(status)) {
       return res.status(400).json({ erro: `Status inválido. Valores aceitos: ${pedidoService.statusValidos.join(', ')}.` });
